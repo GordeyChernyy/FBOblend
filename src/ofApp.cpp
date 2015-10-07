@@ -31,7 +31,13 @@ void ofApp::draw(){
     
     string s;
     s.append("change layer: press SPACE\n");
-    s.append("layer: "+ofToString(layer));
+    s.append("layer:        "+ofToString(layer)+"\n");
+    s.append("- COLORS --------------\n");
+    s.append("white:        press '1'\n");
+    s.append("black:        press '2'\n");
+    s.append("red:          press '3'\n");
+    s.append("green:        press '4'\n");
+    
     ofSetColor(0,255);
     ofDrawBitmapString(s, 20, 20);
     
