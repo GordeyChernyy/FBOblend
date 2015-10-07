@@ -15,6 +15,8 @@ void ofApp::setup(){
         ofClear(255, 0);
     fbo2.end();
     ofBackground(255, 255, 255, 255);
+    
+    global_color = ofColor(255,0,255,255);
 }
 
 //--------------------------------------------------------------
@@ -23,27 +25,38 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofEnableAlphaBlending();
-    
-    ofSetColor(255,255);
+    ofSetColor(255, 255);
     fbo1.draw(0,0);
+    ofSetColor(255, 255);
     fbo2.draw(0,0);
-    
-    string s;
-    s.append("change layer: press SPACE\n");
-    s.append("layer:        "+ofToString(layer)+"\n");
-    s.append("- COLORS --------------\n");
-    s.append("white:        press '1'\n");
-    s.append("black:        press '2'\n");
-    s.append("red:          press '3'\n");
-    s.append("green:        press '4'\n");
-    
-    ofSetColor(0,255);
-    ofDrawBitmapString(s, 20, 20);
-    
-    ofDisableAlphaBlending();
 }
-
+void ofApp::mouseDragged(int x, int y, int button){
+    switch (layer) {
+        case 1:
+            fbo1.begin();
+            glPushAttrib(GL_ALL_ATTRIB_BITS);
+            glEnable(GL_BLEND);
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+            ofSetColor(255, 0, 0, 120);
+            ofCircle(x, y, 20);
+            glDisable(GL_BLEND);
+            glPopAttrib();
+            fbo1.end();
+            
+            break;
+        case 2:
+            fbo2.begin();
+            glPushAttrib(GL_ALL_ATTRIB_BITS);
+            glEnable(GL_BLEND);
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+            ofSetColor(255, 0, 0, 255);
+            ofCircle(x, y, 20);
+            glDisable(GL_BLEND);
+            glPopAttrib();
+            fbo2.end();
+            break;
+    }
+}
 void ofApp::drawBrush(ofFbo &fbo){
     ofVec2f m(mouseX, mouseY);
     history.push_back(m);
@@ -53,7 +66,7 @@ void ofApp::drawBrush(ofFbo &fbo){
             fbo.begin();
                 ofEnableAlphaBlending();
                     ofNoFill();
-                    ofSetColor(color, opacity);
+                    ofSetColor(255, 0, 0, 255);
                     ofSetLineWidth(1.53);
                     ofLine(h.x, h.y, m.x, m.y);
                 ofDisableAlphaBlending();
@@ -67,8 +80,8 @@ void ofApp::keyPressed(int key){
     if (key ==' ') {
         layer == 1? layer = 2: layer = 1;
     }
-    if (key == '1') color = ofColor(255, 0);
-    if (key == '2') color = ofColor(0, 0);
+    if (key == '1') color = ofColor(255, 255, 255);
+    if (key == '2') color = ofColor(0, 0, 0);
     if (key == '3') color = ofColor(255, 0, 0);
     if (key == '4') color = ofColor(0, 255, 0);
 }
@@ -84,16 +97,7 @@ void ofApp::mouseMoved(int x, int y ){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-    switch (layer) {
-        case 1:
-            drawBrush(fbo1);
-            break;
-        case 2:
-            drawBrush(fbo2);
-            break;
-    }
-}
+
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){

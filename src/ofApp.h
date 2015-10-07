@@ -37,4 +37,6 @@ class ofApp : public ofBaseApp{
     
     ofFbo fbo1;
     ofFbo fbo2;
+    
+    ofColor global_color;
 };
