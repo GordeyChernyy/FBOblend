@@ -7,12 +7,14 @@ void ofApp::setup(){
 
     fbo1.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
     fbo1.begin();
-        ofClear(255, 0);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     fbo1.end();
     
     fbo2.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
     fbo2.begin();
-        ofClear(255, 0);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     fbo2.end();
     ofBackground(255, 255, 255, 255);
     
@@ -25,35 +27,21 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     ofSetColor(255, 255);
     fbo1.draw(0,0);
     ofSetColor(255, 255);
     fbo2.draw(0,0);
+    glDisable(GL_BLEND);
 }
 void ofApp::mouseDragged(int x, int y, int button){
     switch (layer) {
         case 1:
-            fbo1.begin();
-            glPushAttrib(GL_ALL_ATTRIB_BITS);
-            glEnable(GL_BLEND);
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
-            ofSetColor(255, 0, 0, 120);
-            ofCircle(x, y, 20);
-            glDisable(GL_BLEND);
-            glPopAttrib();
-            fbo1.end();
-            
+            drawBrush(fbo1);
             break;
         case 2:
-            fbo2.begin();
-            glPushAttrib(GL_ALL_ATTRIB_BITS);
-            glEnable(GL_BLEND);
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
-            ofSetColor(255, 0, 0, 255);
-            ofCircle(x, y, 20);
-            glDisable(GL_BLEND);
-            glPopAttrib();
-            fbo2.end();
+            drawBrush(fbo2);
             break;
     }
 }
@@ -64,12 +52,13 @@ void ofApp::drawBrush(ofFbo &fbo){
         ofVec2f h = history[i];
         if (m.match(h, ofRandom(3, 200))){
             fbo.begin();
-                ofEnableAlphaBlending();
+            glEnable(GL_BLEND);
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
                     ofNoFill();
-                    ofSetColor(255, 0, 0, 255);
+                    ofSetColor(color, 25);
                     ofSetLineWidth(1.53);
                     ofLine(h.x, h.y, m.x, m.y);
-                ofDisableAlphaBlending();
+            glDisable(GL_BLEND);
             fbo.end();
         }
     }
